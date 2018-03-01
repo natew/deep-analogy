@@ -45,12 +45,14 @@ class VGG19:
         for i, layer in enumerate(list(self.cnn_temp)):
 
             if isinstance(layer, nn.Conv2d):
-                name = "conv_" + str(block_counter) + "_" + str(conv_counter) + "__" + str(i)
+                name = "conv_" + str(block_counter) + "_" + \
+                    str(conv_counter) + "__" + str(i)
                 conv_counter += 1
                 self.model.add_layer(name, layer)
 
             if isinstance(layer, nn.ReLU):
-                name = "relu_" + str(block_counter) + "_" + str(relu_counter) + "__" + str(i)
+                name = "relu_" + str(block_counter) + "_" + \
+                    str(relu_counter) + "__" + str(i)
                 relu_counter += 1
                 self.model.add_layer(name, nn.ReLU(inplace=False))
 
@@ -58,10 +60,12 @@ class VGG19:
                 name = "pool_" + str(block_counter) + "__" + str(i)
                 batn_counter = relu_counter = conv_counter = 1
                 block_counter += 1
-                self.model.add_layer(name, nn.MaxPool2d((2, 2), ceil_mode=True))  # ***
+                self.model.add_layer(name, nn.MaxPool2d(
+                    (2, 2), ceil_mode=True))  # ***
 
             if isinstance(layer, nn.BatchNorm2d):
-                name = "batn_" + str(block_counter) + "_" + str(batn_counter) + "__" + str(i)
+                name = "batn_" + str(block_counter) + "_" + \
+                    str(batn_counter) + "__" + str(i)
                 batn_counter += 1
                 self.model.add_layer(name, layer)  # ***
 
@@ -111,13 +115,12 @@ class VGG19:
                     print(layer)
                 l = copy.deepcopy(layer)
                 for p in l.parameters():
-                    p.data = p.data.type(torch.DoubleTensor).cuda()
+                    p.data = p.data.type(torch.DoubleTensor)
                 layers.append(l)
         net = nn.Sequential(*layers)
 
-        noise = init.type(torch.cuda.DoubleTensor).clone()
-        target = Variable(feat.type(torch.cuda.DoubleTensor)).detach()
-
+        noise = init.type(torch.DoubleTensor).clone()
+        target = Variable(feat.type(torch.DoubleTensor)).detach()
 
         noise_size = noise.size()
 
@@ -139,17 +142,15 @@ class VGG19:
         # ================
         noise = noise.view(-1)
         for idx in range(1000):
-            noise, stat = lbfgs(f, noise, maxIter=iters, gEps=1e-4, histSize=4, lr=lr, display=display)
+            noise, stat = lbfgs(f, noise, maxIter=iters,
+                                gEps=1e-4, histSize=4, lr=lr, display=display)
             if stat in ["LBFGS REACH MAX ITER", "LBFGS BELOW GRADIENT EPS"]:
                 print(stat)
                 break
 
-
-        noise = noise.type(torch.cuda.FloatTensor)
+        noise = noise.type(torch.FloatTensor)
         noise = Variable(noise.view(noise_size), volatile=True)
-        out = self.forward_subnet(input_tensor=noise, start_layer=start_layer, end_layer=mid_layer)
+        out = self.forward_subnet(
+            input_tensor=noise, start_layer=start_layer, end_layer=mid_layer)
 
         return out.data
-
-
-
