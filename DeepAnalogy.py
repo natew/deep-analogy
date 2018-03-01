@@ -13,7 +13,7 @@ def analogy(img_A, img_BP, config):
     use_cuda = config['use_cuda']
     params = config['params']
     lr = config['lr']
-    assert use_cuda==True, "cpu version is not implemented yet. You can modify VGG19.py to make it support CPU if you like."
+    # assert use_cuda==True, "cpu version is not implemented yet. You can modify VGG19.py to make it support CPU if you like."
 
     # preparing data
     img_A_tensor = torch.FloatTensor(img_A.transpose(2, 0, 1))

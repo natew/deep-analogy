@@ -40,7 +40,7 @@ class VGG19:
         batn_counter = 1
 
         block_counter = 1
-        self.use_cuda = use_cuda
+        # self.use_cuda = use_cuda
 
         for i, layer in enumerate(list(self.cnn_temp)):
 
@@ -65,8 +65,8 @@ class VGG19:
                 batn_counter += 1
                 self.model.add_layer(name, layer)  # ***
 
-        if use_cuda:
-            self.model.cuda()
+        # if use_cuda:
+        #     self.model.cuda()
         self.mean_ = (103.939, 116.779, 123.68)
 
     def forward_subnet(self, input_tensor, start_layer, end_layer):
@@ -76,8 +76,8 @@ class VGG19:
         return input_tensor
 
     def get_features(self, img_tensor, layers):
-        if self.use_cuda:
-            img_tensor = img_tensor.cuda()
+        # if self.use_cuda:
+        #     img_tensor = img_tensor.cuda()
 
         # assert torch.max(img_tensor)<=1.0 and torch.min(img_tensor)>=0.0, 'inccorect range of tensor'
         for chn in range(3):
